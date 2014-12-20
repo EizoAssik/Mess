@@ -3,9 +3,11 @@
 
 #define BUCKET_SIZE 16
 
+DEFINE_METHODS_TABLE(list_methods);
+
 static void init(MessList * raw) {
     raw->length = 0;
-    raw->list = (MessObject*)
+    raw->list   = (MessObject*)
         calloc(BUCKET_SIZE, sizeof(MessObject*));
 }
 
@@ -16,4 +18,4 @@ static MessTypeConstructor cons = {
     .fixsize = sizeof(i64),
 };
 
-MESS_TYPE_CONS(List, cons);
+MESS_TYPE_CONS(List, cons, list_methods);

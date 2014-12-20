@@ -3,10 +3,12 @@
  */
 
 #include <stdlib.h>
-#include "mtype.h"
 #include "common.h"
+#include "mtype.h"
+#include "stack.h"
 
 MessTypeConstructor * TYPE_CONS[MESS_TYPE_COUNT];
+mess_type_method_t  * TYPE_METHOD[MESS_TYPE_COUNT];
 
 MessObject * newobj(MessType type) {
     ui64 fixsize     = TYPE_CONS[type]->fixsize;
@@ -19,5 +21,12 @@ MessObject * newobj(MessType type) {
     return obj;
 }
 
+void method_call(MessTypeMethodID methodid) {
+    mess_type_method_t method = TYPE_METHOD[lastobj()->type][methodid];
+    if (method)
+        method();
+    else
+        errprintf("Method not implemented");
+}
 
 

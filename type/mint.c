@@ -1,5 +1,7 @@
+#include "common.h"
 #include "mtype.h"
 #include "typelist.h"
+#include "stack.h"
 
 
 static void int_init(MessInt * raw) {
@@ -13,4 +15,16 @@ static MessTypeConstructor int_cons = {
     .fixsize = sizeof(i64),
 };
 
-MESS_TYPE_CONS(Int, int_cons);
+static void add() {
+    MessObject * obj = topobj();
+    if (typeof(obj) == Int) {
+        i64 value = typecast(MessInt, obj)->value;
+        pop();
+        typecast(MessInt, topobj())->value += value;
+    } else {
+        errprintf("Int adding with other instance");
+    }
+}
+
+DEFINE_METHODS_TABLE(int_methods) = {add};
+MESS_TYPE_CONS(Int, int_cons, int_methods);
