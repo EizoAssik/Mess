@@ -3,15 +3,18 @@
 
 #include "common.h"
 #include "mtype.h"
-
-MessObject * stack[4096];
+#include "stack.h"
 
 int main() {
-    stack[0] = newobj(Int);
-    stack[1] = newobj(Float);
-    printf("Excepted 42, get %ld.\n",
-           *(i64*)((char*)stack[0]+sizeof(MessObject)));
+    push(newobj(Int));
+    push(newobj(Float));
+    swap();
+    push(newobj(Int));
+    method_call(Add);
+    printf("Excepted 84, get %ld.\n",
+           ((MessInt*)topobj())->value);
+    pop();
     printf("Excepted 42.0, get %lf.\n",
-           *(f64*)((char*)stack[1]+sizeof(MessObject)));
+           ((MessFloat*)topobj())->value);
     return 0;
 }
