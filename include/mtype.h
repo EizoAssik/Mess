@@ -25,7 +25,7 @@ typedef void (*mess_type_method_t)();
 
 typedef struct {
     const char * const name;
-    ui64   id;
+    ui64   type;
     ui64   fixsize;
     type_init_func_t init;
     type_del_func_t  del;
@@ -39,16 +39,28 @@ extern mess_type_method_t  * TYPE_METHOD[];
  * P.S. 编这个名字真费劲
  */
 
-#define MESS_TYPE_CONS(id, cons, methods) static __attribute__((constructor))     \
-void reg_cons_ ## id() {                \
-    cons.fixsize += sizeof(MessObject); \
-    TYPE_CONS[id] = &(cons);            \
-    if (methods)                        \
-        TYPE_METHOD[id] = methods;    \
-} \
+#define SET_MESS_TYPE(type) \
+    static const MessType _THIS_MESS_TYPE = type;
 
-#define DEFINE_METHODS_TABLE(name) \
-    static mess_type_method_t name[MESS_METHOD_COUNT]
+#define SETUP_TYPE_CONS(cons)   \
+    static __attribute__((constructor))     \
+    void reg_cons() {                \
+        cons.type = _THIS_MESS_TYPE; \
+        cons.fixsize += sizeof(MessObject); \
+        TYPE_CONS[_THIS_MESS_TYPE] = &(cons);            \
+    } 
+
+#define SETUP_METHOD_TABLE(...)         \
+    static mess_type_method_t MTHOD_TABLE[MESS_METHOD_COUNT]; \
+    static __attribute__((constructor)) \
+    void init_methods() {               \
+        __VA_ARGS__;                    \
+        TYPE_METHOD[_THIS_MESS_TYPE] = MTHOD_TABLE; \
+    }
+
+#define SET_METHOD(key, func) \
+    MTHOD_TABLE[key] = func
+
 
 MessObject * newobj(MessType type);
 void method_call(MessTypeMethodID method);

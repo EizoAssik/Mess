@@ -3,7 +3,7 @@
 
 #define BUCKET_SIZE 16
 
-DEFINE_METHODS_TABLE(list_methods);
+SET_MESS_TYPE(List);
 
 static void init(MessList * raw) {
     raw->length = 0;
@@ -12,10 +12,9 @@ static void init(MessList * raw) {
 }
 
 static MessTypeConstructor cons = {
-    .id      = Int,
     .name    = "MessList",
     .init    = (type_init_func_t)init,
     .fixsize = sizeof(i64),
 };
 
-MESS_TYPE_CONS(List, cons, list_methods);
+SETUP_TYPE_CONS(cons);
